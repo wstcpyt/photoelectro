@@ -4,6 +4,7 @@ import Photocurrent
 import numpy as np
 import math
 import pylab
+import constant
 
 
 Structurearray=np.array([[1.45,500*10**-9],[1.8+0.2j,100*10**-9],[1.2,500*10**-9],[1,500*10**-9]])
@@ -36,15 +37,6 @@ pylab.show()
 #initate IQE class
 activelayer=1;
 p2=IQE.IQEfunc(Structurearray,0,wavelength)
-Sp=p1.Sjpfun(activelayer)
-Spp=p1.Sjppfun(activelayer)
-p2.rjp=Sp[1,0]/Sp[0,0]
-p2.tjp=1/Sp[0,0]
-p2.rjpp=Spp[1,0]/Spp[0,0]
-p2.tjpp=1/Spp[0,0]
-p2.layer=activelayer
-p2.dthickness=100*10**-9
-########################
 #JPhton=p2.JPhotonfuncd()
 #print(JPhton)
 Qj=np.empty([100,])
@@ -56,25 +48,31 @@ for x in range(0,100):
 list_of_files = [('data/p3htpcbmnew.txt', 'experiment data')]
 datalist = [ ( pylab.loadtxt(filename), label ) for filename, label in list_of_files ]
 for data,label in datalist:
-    W=data[0:,0]
-    n=data[0:,1]
-    k=data[0:,2]
+    W=data[100:,0]
+    n=data[100:,1]
+    k=data[100:,2]
 print(k[1])
 #calculate Jphoton Spectrum
 numberofwavelength=W.shape[0]
 JPhoton=np.empty([numberofwavelength,])
+IPCE=np.empty([numberofwavelength,])
+
 for i in range(0,numberofwavelength):
-    Structurearray=np.array([[1,500*10**-9],[n[i]+k[i]*1j,100*10**-9],[1.2,500*10**-9],[1,500*10**-9]])
+    Structurearray=np.array([[1,500*10**-9],[n[i]+k[i]*1j,200*10**-9],[1.2,500*10**-9],[1,500*10**-9]])
     #initate IQE class
     activelayer=1
     p2=Photocurrent.Photocurrent(Structurearray,0,W[i]*10**-9,"TE")
     p2.layer=activelayer
-    p2.dthickness=100*10**-9
+    Nphoton=p2.Nfunc(W[i])
+    p2.N=Nphoton
+    p2.dthickness=200*10**-9
     JPhoton[i]=p2.JPhotonfunc0()
+    IPCE[i]=p2.ipce0()
 ########################
-print(JPhoton)
-pylab.plot(W,JPhoton)
+pylab.plot(W,IPCE)
 pylab.ylabel('Jsc (A/m^2)')
 pylab.xlabel('wavelength (nm)')
 pylab.show()
+
+
 

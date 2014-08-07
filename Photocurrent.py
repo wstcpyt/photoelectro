@@ -12,7 +12,7 @@ class Photocurrent(IOEF.IOEF):
     t=18*10**-10 #is the mean life time of the exciton
     L=np.sqrt(D*t)
     N=2.365*10**18 #incident photon flux for 1W/m**2*s
-    Beta=1/(np.sqrt(D*t))
+    Beta=1/(L)
     #wait for setting
     rjp=0
     tjp=0
